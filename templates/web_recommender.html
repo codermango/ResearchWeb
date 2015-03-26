@@ -2,13 +2,16 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='recommender.css') }}">
-
+    <script type="text/javascript" src="{{ url_for('static', filename='recommender.js') }}"></script>
 </head>
 <body>
     <div id="main">
         <div id="submit-area">
-            <button id="submit-button">submit</button>
-            <textarea id="textarea-ids">sss</textarea>
+            <form id="submit-ids-form" action="{{ url_for('recommender_result') }}" method="post" onsubmit="return checkInput()">
+                <button type="submit" id="submit-button">submit</button>
+                <textarea id="textarea-ids" name="ids"></textarea>
+            </form>
+            
         </div>
         <div id="liked-movie">
             <div id="liked-movie-list">
