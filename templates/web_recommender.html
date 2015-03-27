@@ -24,7 +24,8 @@
         <div id="liked-movie">
             <div id="liked-movie-list">
                 {% for item in liked_ids %}
-                    <div>{{ item }}</div>
+
+                    <div><img src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}" width="100px", height="150px"></div>
                 {% endfor %}
 
             </div>
@@ -32,7 +33,7 @@
         <div id="recommended-movie">
             <div id="recommended-movie-list">
                 {% for item in recommended_ids %}
-                    <div>{{ item }}</div>
+                    <div><img src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}" width="100px", height="150px"></div>
                 {% endfor %}
 
 
