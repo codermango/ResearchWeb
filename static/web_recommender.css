@@ -27,11 +27,11 @@ body {
     font-size: 20px;
     padding: 20px 26px 20px 26px;
     text-decoration: none;
-
+    -webkit-transition: background-color 1s;
 }
 
 #nav a:hover {
-    font-size: 36px;
+    background-color: #eeeeee;
 }
 
 
@@ -50,7 +50,7 @@ body {
 
 
 #submit-area {
-    /*border: 1px solid;*/
+    border: 1px solid;
     position: relative;
     margin: 20px 10px 20px 20px;
     float: left;
@@ -61,7 +61,7 @@ body {
 #liked-movie {
     margin: 20px 20px 20px 5px;
     float: left;
-    /*border: 1px solid;*/
+    border: 1px solid;
     width: 1260px;
     padding: 0px;
     min-height: 155px;
@@ -87,7 +87,7 @@ body {
 #recommended-movie {
     margin: 20px 20px 20px 5px;
     float: left;
-    /*border: 1px solid;*/
+    border: 1px solid;
     width: 1260px;
     padding: 0px;
     min-height: 155px;
