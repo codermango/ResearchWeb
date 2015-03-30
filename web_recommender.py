@@ -12,15 +12,19 @@ def web_recommender():
 
 @app.route("/web_recommender/result/", methods=["POST"])
 def web_recommender_result():
+
     if request.method == "POST":
-        ids = request.form["ids"]
-        ids_list = ids.split("\n")
+        ids = request.form["movieId"]
+
+        ids_list = ids.split(",")
         trimed_ids_list = map(lambda x: x.strip(), ids_list)
 
-        recommended_ids = libs.recommender.recommend(trimed_ids_list)
+        genre_recommended_ids = libs.recommender.recommend(trimed_ids_list, "genre")
+        mawid_recommended_ids = libs.recommender.recommend(trimed_ids_list, "mawid")
+        all_recommended_ids = libs.recommender.recommend(trimed_ids_list, "all")
 
-        return render_template("web_recommender.html", liked_ids=trimed_ids_list, recommended_ids=recommended_ids)
-        
+        return render_template("web_recommender.html", liked_ids=trimed_ids_list, genre_recommended_ids=genre_recommended_ids, mawid_recommended_ids=mawid_recommended_ids, all_recommended_ids=all_recommended_ids)
+
 
 
 if __name__ == '__main__':

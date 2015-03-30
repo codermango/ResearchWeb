@@ -60,7 +60,7 @@ def get_sum_of_every_mawid_dic(mawid_with_count_file):
 
 
 
-def co_recommend(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list):
+def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list):
     final_cos_sim_dic = {}
     genre_cos_sim_counter = Counter(genre_cos_sim_dic)
     mawid_cos_sim_counter = Counter(mawid_cos_sim_dic)
@@ -69,16 +69,27 @@ def co_recommend(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies
     
     for key in user_liked_movie_id_list:
         del combined_cos_sim_counter[key]
+        del genre_cos_sim_counter[key]
+        del mawid_cos_sim_counter[key]
 
-    final_recommended_movies = combined_cos_sim_counter.most_common(num_of_recommended_movies)
+    final_co_recommended_movies = combined_cos_sim_counter.most_common(num_of_recommended_movies)
+    final_genre_recommended_movies = genre_cos_sim_counter.most_common(num_of_recommended_movies)
+    final_mawid_recommended_movies = mawid_cos_sim_counter.most_common(num_of_recommended_movies)
 
-    #print 'final_recommended_movies:', final_recommended_movies
-    return final_recommended_movies
+    # print 'final_co_recommended_movies:', final_co_recommended_movies
+    # print final_genre_recommended_movies
+    # print final_mawid_recommended_movies
 
-    
+    dic_result = dict()
+    dic_result["all"] = final_co_recommended_movies
+    dic_result["genre"] = final_genre_recommended_movies
+    dic_result["mawid"] = final_mawid_recommended_movies
+
+    return dic_result
 
 
-def recommend(user_liked_movie_id_list):
+
+def recommend(user_liked_movie_id_list, recommend_method="all"):
     ################################################################################
     # 为genre推荐的前期处理
     movie_genre_vector_file = open(os.path.split(os.path.realpath(__file__))[0] + "/movie_genre_vector.json")
@@ -102,9 +113,11 @@ def recommend(user_liked_movie_id_list):
     mawid_cos_sim_dic = mawid_recommender.recommend(user_mawid_preference_dic, id_with_mawid_dic, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic)
 
     num_of_recommended_movies = 20
-    id_list = co_recommend(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list)
+    result = generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list)
+    return dict(result[recommend_method]).keys()
 
-    return dict(id_list).keys()
+
+
 ###########################################################################
 ###########################################################################
 ###########################################################################

@@ -12,8 +12,8 @@ def generate_sum_of_every_mawid_dic(dic_id_with_mawid):   # 太耗时！！！�
     mawid_list = reduce(lambda x, y: x + y, dic_id_with_mawid_values)
     mawid_list = list(set(mawid_list))
 
-    print len(mawid_list)
-    print len(dic_id_with_mawid), 'aaa'
+    # print len(mawid_list)
+    # print len(dic_id_with_mawid), 'aaa'
 
     mawid_with_count_dic = {}
     for mawid in mawid_list:
@@ -93,9 +93,9 @@ def get_cos_sim(user_mawid_preference_dic, mawid_list, sum_of_all_mawid_in_all_m
 
 
 def recommend(user_mawid_preference_dic, dic_id_with_mawid, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic):
-    print 'user_mawid_preference_dic:', user_mawid_preference_dic
-    print 'user_mawid_preference_dic values:', user_mawid_preference_dic.values()
-    print 'length of user_mawid_preference_dic:', len(user_mawid_preference_dic)
+    # print 'user_mawid_preference_dic:', user_mawid_preference_dic
+    # print 'user_mawid_preference_dic values:', user_mawid_preference_dic.values()
+    # print 'length of user_mawid_preference_dic:', len(user_mawid_preference_dic)
 
     count = 0
     user_mawid_preference_dic_keys = user_mawid_preference_dic.keys()

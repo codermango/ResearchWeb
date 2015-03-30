@@ -7,37 +7,73 @@
 <body>
     <div id="header">
         <div id="nav">
-            
-            <a href="/recommender/">R</a>
-            <a href="/recommender/">R</a>
-            
+            <a href="/recommender/">R1</a>
+            <a href="/recommender/">R2</a>
+            <a href="/recommender/">R3</a>
+            <a href="/recommender/">R4</a>
+            <a href="/recommender/">R5</a>
+            <a href="/recommender/">R6</a>
         </div>
     </div>
     <div id="main">
-        <div id="submit-area">
-            <form id="submit-ids-form" action="{{ url_for('web_recommender_result') }}" method="post" onsubmit="return checkInput()">
-                <button type="submit" id="submit-button">submit</button>
-                <textarea id="textarea-ids" name="ids" wrap="hard"></textarea>
-            </form>
-            
-        </div>
+        
         <div id="liked-movie">
             <div id="liked-movie-list">
                 {% for item in liked_ids %}
-
-                    <div><img src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}" width="100px", height="150px"></div>
+                    <div>
+                        <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                        {{ item }}
+                    </div>
                 {% endfor %}
 
             </div>
+
+            <div id="submit-area">
+                <form id="submit-ids-form" action="{{ url_for('web_recommender_result') }}" method="post" onsubmit="return checkInput()">
+                    <input type="text" id="submit-input" name="movieId" placeholder="imdb ids, seperated by comma" />
+                    <button type="submit" id="submit-button">submit</button>
+                </form>
+            
+            </div>
+
         </div>
         <div id="recommended-movie">
-            <div id="recommended-movie-list">
-                {% for item in recommended_ids %}
-                    <div><img src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}" width="100px", height="150px"></div>
-                {% endfor %}
-
-
+            <div class="recommended-category">
+                <div class="category-title">
+                    Recommended based on genre
+                </div>
+                <div class="recommended-movie-list">
+                    {% for item in genre_recommended_ids %}
+                        <div>
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            {{ item }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="category-title">
+                    Recommended based on main actor
+                </div>
+                <div class="recommended-movie-list">
+                    {% for item in mawid_recommended_ids %}
+                        <div>
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            {{ item }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="category-title">
+                    Recommended based on all features
+                </div>
+                <div class="recommended-movie-list">
+                    {% for item in all_recommended_ids %}
+                        <div>
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            {{ item }}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+
         </div>
     </div>
     
