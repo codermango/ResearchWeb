@@ -1,3 +1,4 @@
+
 function checkInput() {
     var txt = document.querySelector("#submit-input");
     var txtValue = txt.value;
@@ -9,3 +10,4 @@ function checkInput() {
         return true;
     }
 }
+

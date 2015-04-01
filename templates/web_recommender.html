@@ -22,7 +22,7 @@
             <div id="liked-movie-list">
                 {% for item in liked_ids %}
                     <div>
-                        <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                        <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '.jpg')}}" onerror="this.src='/static/images/no_poster.jpg'">
                         {{ item }}
                     </div>
                 {% endfor %}
@@ -46,7 +46,7 @@
                 <div class="recommended-movie-list">
                     {% for item in genre_recommended_ids %}
                         <div>
-                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '.jpg')}}" onerror="this.src='/static/images/no_poster.jpg'">
                             {{ item }}
                         </div>
                     {% endfor %}
@@ -57,7 +57,7 @@
                 <div class="recommended-movie-list">
                     {% for item in mawid_recommended_ids %}
                         <div>
-                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '.jpg')}}" onerror="this.src='/static/images/no_poster.jpg'">
                             {{ item }}
                         </div>
                     {% endfor %}
@@ -68,7 +68,7 @@
                 <div class="recommended-movie-list">
                     {% for item in all_recommended_ids %}
                         <div>
-                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '_.jpg')}}">
+                            <img class="img-block" src="{{url_for('static', filename='images/posters/' + item + '.jpg')}}" onerror="this.src='/static/images/no_poster.jpg'">
                             {{ item }}
                         </div>
                     {% endfor %}
