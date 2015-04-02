@@ -9,6 +9,7 @@ import os
 def generate_user_genre_preference_vector(list_user_liked_movie_id, dic_id_with_genre):
     
     list_of_liked_movie_genre_vector = []
+    dimension_of_genre_vector = len(dic_id_with_genre.values()[0]) #用于下面生成0向量
 
     for id in list_user_liked_movie_id:
         try:
@@ -16,8 +17,12 @@ def generate_user_genre_preference_vector(list_user_liked_movie_id, dic_id_with_
         except KeyError:
             continue
 
-    user_preference_vector = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_liked_movie_genre_vector)
-    # print 'user_preference_vector: ', user_preference_vector
+    print list_of_liked_movie_genre_vector
+    if list_of_liked_movie_genre_vector:   #如果为空，则以下reduce计算不了
+        user_preference_vector = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_liked_movie_genre_vector)
+    else:
+        user_preference_vector = [0] * dimension_of_genre_vector
+    print 'user_preference_vector: ', user_preference_vector
 
     return user_preference_vector
 
@@ -76,9 +81,9 @@ def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_mov
     final_genre_recommended_movies = genre_cos_sim_counter.most_common(num_of_recommended_movies)
     final_mawid_recommended_movies = mawid_cos_sim_counter.most_common(num_of_recommended_movies)
 
-    # print 'final_co_recommended_movies:', final_co_recommended_movies
-    # print final_genre_recommended_movies
-    # print final_mawid_recommended_movies
+    print 'final_co_recommended_movies:', final_co_recommended_movies
+    print final_genre_recommended_movies
+    print final_mawid_recommended_movies
 
     dic_result = dict()
     dic_result["all"] = final_co_recommended_movies

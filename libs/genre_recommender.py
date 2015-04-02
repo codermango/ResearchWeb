@@ -23,15 +23,18 @@ def generate_tfidf_vector(user_preference_vector, dic_id_with_genre):
 
     sum_of_user_preference_vector = sum(user_preference_vector) # 也是sum_of_all_genre_in_liked_movies
 
-    tf_vector = map(lambda x: x / sum_of_user_preference_vector, user_preference_vector)
-    # print 'tf_vector:', tf_vector
+    if sum_of_user_preference_vector:
+        tf_vector = map(lambda x: x / sum_of_user_preference_vector, user_preference_vector)
+        # print 'tf_vector:', tf_vector
 
-    sum_of_all_genre_in_all_movies = get_sum_of_all_genre_in_all_movies(dic_id_with_genre)
-    idf_vector = map(lambda x: sum_of_all_genre_in_all_movies / x, sum_of_every_genre_vector)
-    # print 'idf_vector：', idf_vector
+        sum_of_all_genre_in_all_movies = get_sum_of_all_genre_in_all_movies(dic_id_with_genre)
+        idf_vector = map(lambda x: sum_of_all_genre_in_all_movies / x, sum_of_every_genre_vector)
+        # print 'idf_vector：', idf_vector
 
-    tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
-    # print 'tfidf_vector:', tfidf_vector
+        tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
+        # print 'tfidf_vector:', tfidf_vector
+    else:
+        tfidf_vector = user_preference_vector
 
     return tfidf_vector
 
@@ -46,7 +49,10 @@ def get_cos_values_dict(dic_id_with_genre, tfidf_vector):
         tmp2 = math.sqrt(sum([x ** 2 for x in tfidf_vector]))
         num2 = tmp1 * tmp2  # num2=sqrt(a1^2+a2^2+a3^2) * sqrt(b1^2+b2^2+b3^2)
 
-        cos_value = num1 / num2
+        if num2:
+            cos_value = num1 / num2
+        else:
+            cos_value = 0
         cos_values_dict[k] = cos_value
         
     return cos_values_dict
