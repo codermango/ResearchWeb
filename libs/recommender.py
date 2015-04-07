@@ -17,12 +17,13 @@ def generate_user_genre_preference_vector(list_user_liked_movie_id, dic_id_with_
         except KeyError:
             continue
 
-    print list_of_liked_movie_genre_vector
+    #print list_of_liked_movie_genre_vector
     if list_of_liked_movie_genre_vector:   #如果为空，则以下reduce计算不了
         user_preference_vector = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_liked_movie_genre_vector)
     else:
         user_preference_vector = [0] * dimension_of_genre_vector
-    print 'user_preference_vector: ', user_preference_vector
+
+    #print 'user_preference_vector: ', user_preference_vector
 
     return user_preference_vector
 
@@ -67,12 +68,17 @@ def get_sum_of_every_mawid_dic(mawid_with_count_file):
 
 def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list):
     final_cos_sim_dic = {}
+
+    if not genre_cos_sim_dic.values()[0]:
+        genre_cos_sim_dic = {}
+
+
     genre_cos_sim_counter = Counter(genre_cos_sim_dic)
     mawid_cos_sim_counter = Counter(mawid_cos_sim_dic)
 
     combined_cos_sim_counter = genre_cos_sim_counter + mawid_cos_sim_counter
     
-    for key in user_liked_movie_id_list:
+    for key in user_liked_movie_id_list:    
         del combined_cos_sim_counter[key]
         del genre_cos_sim_counter[key]
         del mawid_cos_sim_counter[key]
@@ -81,9 +87,9 @@ def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_mov
     final_genre_recommended_movies = genre_cos_sim_counter.most_common(num_of_recommended_movies)
     final_mawid_recommended_movies = mawid_cos_sim_counter.most_common(num_of_recommended_movies)
 
-    print 'final_co_recommended_movies:', final_co_recommended_movies
-    print final_genre_recommended_movies
-    print final_mawid_recommended_movies
+    # print 'final_co_recommended_movies:', final_co_recommended_movies
+    # print final_genre_recommended_movies
+    # print final_mawid_recommended_movies
 
     dic_result = dict()
     dic_result["all"] = final_co_recommended_movies
@@ -133,11 +139,11 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
 
 
 # my_liked_movie_id_file = open("mark_liked_movie_id.txt")
-# # 把文件中的id放入list
-# user_liked_movie_id_list = []
-# for line_of_my_liked_movie_list in my_liked_movie_id_file:
-#     user_liked_movie_id_list.append(line_of_my_liked_movie_list.strip())
-# print user_liked_movie_id_list
+# 把文件中的id放入list
+# user_liked_movie_id_list = ["tt2820852", "tt2820852"]
+# # for line_of_my_liked_movie_list in my_liked_movie_id_file:
+# #     user_liked_movie_id_list.append(line_of_my_liked_movie_list.strip())
+# # print user_liked_movie_id_list
 
 # id_list = recommend(user_liked_movie_id_list)
 
