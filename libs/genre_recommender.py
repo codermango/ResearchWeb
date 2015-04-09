@@ -70,7 +70,7 @@ def get_recommended_movie_id(num_of_recommended_movies, cos_values_dict):
 def recommend(user_preference_vector, dic_id_with_genre):
     tfidf_vector = generate_tfidf_vector(user_preference_vector, dic_id_with_genre)
     
-    # print "tfidf_vector： ", tfidf_vector
+    print "tfidf_vector： ", tfidf_vector
 
     cos_values_dict = get_cos_values_dict(dic_id_with_genre, tfidf_vector)
 

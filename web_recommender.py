@@ -28,6 +28,18 @@ def web_recommender_result():
         return render_template("web_recommender.html", liked_ids=trimed_ids_list, genre_recommended_ids=genre_recommended_ids, mawid_recommended_ids=mawid_recommended_ids, all_recommended_ids=all_recommended_ids)
 
 
+@app.route("/web_moviefingerprinting/", methods=["GET"])
+def web_moviefingerprinting():
+    count_of_alien = get_file_count("./web_moviefingerprinting/Alien/resized")
+    # count_of_bourneidentity = get_file_count("./web_moviefingerprinting/BourneIdentity/resized")
+    # count_of_bournesupremacy = get_file_count("./web_moviefingerprinting/BourneIdentity/resized")
+
+    return render_template("moviefingerprinting_both.html", count=count_of_alien)
+
+#====================================================================================================
+def get_file_count(dir):
+    return sum([len(files) for root,dirs,files in os.walk(dir)])
+
 
 if __name__ == '__main__':
     app.run(debug=True)

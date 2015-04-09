@@ -23,7 +23,7 @@ def generate_user_genre_preference_vector(list_user_liked_movie_id, dic_id_with_
     else:
         user_preference_vector = [0] * dimension_of_genre_vector
 
-    #print 'user_preference_vector: ', user_preference_vector
+    print 'user_preference_vector: ', user_preference_vector
 
     return user_preference_vector
 
@@ -78,10 +78,10 @@ def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_mov
 
     combined_cos_sim_counter = genre_cos_sim_counter + mawid_cos_sim_counter
     
-    for key in user_liked_movie_id_list:    
-        del combined_cos_sim_counter[key]
-        del genre_cos_sim_counter[key]
-        del mawid_cos_sim_counter[key]
+    # for key in user_liked_movie_id_list:    
+    #     del combined_cos_sim_counter[key]
+    #     del genre_cos_sim_counter[key]
+    #     del mawid_cos_sim_counter[key]
 
     final_co_recommended_movies = combined_cos_sim_counter.most_common(num_of_recommended_movies)
     final_genre_recommended_movies = genre_cos_sim_counter.most_common(num_of_recommended_movies)
@@ -123,8 +123,9 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
     genre_cos_sim_dic = genre_recommender.recommend(user_genre_preference_vector, id_with_genre_dic)
     mawid_cos_sim_dic = mawid_recommender.recommend(user_mawid_preference_dic, id_with_mawid_dic, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic)
 
-    num_of_recommended_movies = 20
+    num_of_recommended_movies = 100
     result = generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list)
+    print result
     return dict(result[recommend_method]).keys()
 
 
@@ -140,14 +141,15 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
 
 # my_liked_movie_id_file = open("mark_liked_movie_id.txt")
 # 把文件中的id放入list
-# user_liked_movie_id_list = ["tt2820852", "tt2820852"]
-# # for line_of_my_liked_movie_list in my_liked_movie_id_file:
-# #     user_liked_movie_id_list.append(line_of_my_liked_movie_list.strip())
-# # print user_liked_movie_id_list
+user_liked_movie_id_list = ["tt0348124","tt0401398","tt0486761","tt0181196","tt0389074","tt0279967","tt0969647","tt0097757","tt0103639"]
+# # # for line_of_my_liked_movie_list in my_liked_movie_id_file:
+# # #     user_liked_movie_id_list.append(line_of_my_liked_movie_list.strip())
+# # # print user_liked_movie_id_list
 
-# id_list = recommend(user_liked_movie_id_list)
+#user_liked_movie_id_list = ["tt1229821","tt0401398"]
+id_list = recommend(user_liked_movie_id_list)
 
-# print id_list
+print id_list
 
 
 
