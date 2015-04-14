@@ -2,7 +2,7 @@
 from __future__ import division
 import json
 import math
-
+import os
 
 
 def generate_yearvector(releaseyear):
@@ -22,31 +22,27 @@ def generate_yearvector(releaseyear):
 def get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyear_dict):
     user_preference_vector = [0, 0, 0, 0]
     for movieid in user_liked_movie_id_list:
-        releaseyear = movieid_with_releaseyear_dict[movieid]
-        yearvector = generate_yearvector(releaseyear)
-        user_preference_vector = [x + y for x, y in zip(user_preference_vector, yearvector)]
-
-    print user_preference_vector
+        try:
+            releaseyear = movieid_with_releaseyear_dict[movieid]
+            yearvector = generate_yearvector(releaseyear)
+            user_preference_vector = [x + y for x, y in zip(user_preference_vector, yearvector)]
+        except KeyError:
+            continue
+    print user_preference_vector, "--"
     return user_preference_vector
 
 
 
-def generate_tfidf_vector(user_preference_vector, movieid_with_releaseyear_dict):
-
-    movieid_with_yearvector_dict = dict()
-    for k, v in movieid_with_releaseyear_dict.items():
-        movieid_with_yearvector_dict[k] = generate_yearvector(v)
-
-    print movieid_with_yearvector_dict.items()[0]
+def generate_tfidf_vector(user_preference_vector, movieid_with_yearvector_dict):
 
     # 喜好列表中的时间段总数
     sum_of_releaseduration_in_liked_list = sum(user_preference_vector)
-
+    print sum_of_releaseduration_in_liked_list, "===="
     if sum_of_releaseduration_in_liked_list:
         tf_vector = map(lambda x: x / sum_of_releaseduration_in_liked_list, user_preference_vector)
         print "tf_vector:", tf_vector
 
-        sum_of_releaseduration_in_all_movies = len(movieid_with_releaseyear_dict) #因为一个电影只有一个release year
+        sum_of_releaseduration_in_all_movies = len(movieid_with_yearvector_dict) #因为一个电影只有一个release year
         list_of_yearvector = movieid_with_yearvector_dict.values()
 
         sum_of_every_releaseduration = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_yearvector)
@@ -62,17 +58,44 @@ def generate_tfidf_vector(user_preference_vector, movieid_with_releaseyear_dict)
     return tfidf_vector
 
 
+def get_cos_values_dict(movieid_with_yearvector_dict, tfidf_vector):
+    cos_values_dict = dict()
+    for k, v in movieid_with_yearvector_dict.items():
+        # 计算余弦值
+        num1 = sum([x * y for x, y in zip(v, tfidf_vector)])  # num1=a1*b1+a2*b2+a3*b3
+        tmp1 = math.sqrt(sum([x ** 2 for x in v]))
+        tmp2 = math.sqrt(sum([x ** 2 for x in tfidf_vector]))
+        num2 = tmp1 * tmp2  # num2=sqrt(a1^2+a2^2+a3^2) * sqrt(b1^2+b2^2+b3^2)
+
+        if num2:
+            cos_value = num1 / num2
+        else:
+            cos_value = 0
+        cos_values_dict[k] = cos_value
+        
+    return cos_values_dict
+
+
 
 def recommend(user_liked_movie_id_list):
 
-    movieid_with_releaseyear_file = open("movieid_with_releaseyear.json")
+    movieid_with_releaseyear_file = open(os.path.split(os.path.realpath(__file__))[0] + "/movieid_with_releaseyear.json")
     movieid_with_releaseyear_dict = json.loads(movieid_with_releaseyear_file.readline())
     print len(movieid_with_releaseyear_dict)
 
+    movieid_with_yearvector_dict = dict()
+    for k, v in movieid_with_releaseyear_dict.items():
+        movieid_with_yearvector_dict[k] = generate_yearvector(v)
+
+    print movieid_with_yearvector_dict.items()[0]
+
     user_preference_vector = get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyear_dict)
 
-    tfidf_vector = generate_tfidf_vector(user_preference_vector, movieid_with_releaseyear_dict)
+    tfidf_vector = generate_tfidf_vector(user_preference_vector, movieid_with_yearvector_dict)
 
+    cos_values_dict = get_cos_values_dict(movieid_with_yearvector_dict, tfidf_vector)
+    
+    return cos_values_dict
 
 
 user_liked_movie_id_list = ["tt0348124","tt0401398","tt0486761","tt0181196","tt0389074","tt0279967","tt0969647","tt0097757","tt0103639"]
