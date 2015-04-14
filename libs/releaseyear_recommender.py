@@ -16,7 +16,6 @@ def generate_yearvector(releaseyear):
     elif releaseyear >= 2010 and releaseyear < 2020:
         result = [0, 0, 0, 1]
 
-    print result
     return result
 
 
@@ -32,26 +31,47 @@ def get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyea
 
 
 
+def generate_tfidf_vector(user_preference_vector, movieid_with_releaseyear_dict):
+
+    movieid_with_yearvector_dict = dict()
+    for k, v in movieid_with_releaseyear_dict.items():
+        movieid_with_yearvector_dict[k] = generate_yearvector(v)
+
+    print movieid_with_yearvector_dict.items()[0]
+
+    # 喜好列表中的时间段总数
+    sum_of_releaseduration_in_liked_list = sum(user_preference_vector)
+
+    if sum_of_releaseduration_in_liked_list:
+        tf_vector = map(lambda x: x / sum_of_releaseduration_in_liked_list, user_preference_vector)
+        print "tf_vector:", tf_vector
+
+        sum_of_releaseduration_in_all_movies = len(movieid_with_releaseyear_dict) #因为一个电影只有一个release year
+        list_of_yearvector = movieid_with_yearvector_dict.values()
+
+        sum_of_every_releaseduration = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_yearvector)
+        print sum_of_every_releaseduration
+        idf_vector = map(lambda x: sum_of_releaseduration_in_all_movies / x, sum_of_every_releaseduration)
+        print "idf_vector:", idf_vector
+
+        tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
+        print 'tfidf_vector:', tfidf_vector
+    else:
+        tfidf_vector = user_preference_vector
+
+    return tfidf_vector
+
+
+
 def recommend(user_liked_movie_id_list):
 
     movieid_with_releaseyear_file = open("movieid_with_releaseyear.json")
     movieid_with_releaseyear_dict = json.loads(movieid_with_releaseyear_file.readline())
+    print len(movieid_with_releaseyear_dict)
 
     user_preference_vector = get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyear_dict)
 
-    # tfidf_vector = generate_tfidf_vector(user_preference_vector, dic_id_with_genre)
-    
-    # print "tfidf_vector： ", tfidf_vector
-
-    # cos_values_dict = get_cos_values_dict(dic_id_with_genre, tfidf_vector)
-
-    # # print len(cos_values_dict)
-
-    # return cos_values_dict
-
-
-
-
+    tfidf_vector = generate_tfidf_vector(user_preference_vector, movieid_with_releaseyear_dict)
 
 
 
