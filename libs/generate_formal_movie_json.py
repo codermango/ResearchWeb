@@ -15,6 +15,7 @@ import os
     }
 '''
 
+
 tagdb_after_neaten_genres_file = open("tagdb_after_neaten_genres.json")
 
 movieid_with_mawid_file = open("movie_id_with_mawid.json")

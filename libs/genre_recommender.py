@@ -2,8 +2,30 @@
 from __future__ import division
 import json
 import math
+import os
 
 ####################################################################################################
+
+def generate_user_genre_preference_vector(list_user_liked_movie_id, dic_id_with_genre):
+    
+    list_of_liked_movie_genre_vector = []
+    dimension_of_genre_vector = len(dic_id_with_genre.values()[0]) #用于下面生成0向量
+
+    for id in list_user_liked_movie_id:
+        try:
+            list_of_liked_movie_genre_vector.append(dic_id_with_genre[id])
+        except KeyError:
+            continue
+
+    #print list_of_liked_movie_genre_vector
+    if list_of_liked_movie_genre_vector:   #如果为空，则以下reduce计算不了
+        user_preference_vector = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_liked_movie_genre_vector)
+    else:
+        user_preference_vector = [0] * dimension_of_genre_vector
+
+    print 'user_preference_vector: ', user_preference_vector
+
+    return user_preference_vector
 
 
      
@@ -39,7 +61,20 @@ def generate_tfidf_vector(user_preference_vector, dic_id_with_genre):
     return tfidf_vector
 
 
-def get_cos_values_dict(dic_id_with_genre, tfidf_vector):
+
+def get_recommended_movie_id(num_of_recommended_movies, cos_values_dict):
+    cos_value_sorted_tuple_list = sorted(cos_values_dict.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
+    recommended_cos_value = [cos_value_sorted_tuple_list[x] for x in range(0, num_of_recommended_movies)]
+    # print recommended_cos_value
+
+    recommended_movie_id_list = [recommended_cos_value[x][0] for x in range(0, len(recommended_cos_value))]
+    #print recommended_movie_id_list
+    return recommended_movie_id_list
+
+def get_cos_values_dict(user_preference_vector, dic_id_with_genre):
+    tfidf_vector = generate_tfidf_vector(user_preference_vector, dic_id_with_genre)
+    
+    print "tfidf_vector： ", tfidf_vector
 
     cos_values_dict = dict()
     for k, v in dic_id_with_genre.items():
@@ -54,28 +89,7 @@ def get_cos_values_dict(dic_id_with_genre, tfidf_vector):
         else:
             cos_value = 0
         cos_values_dict[k] = cos_value
-        
-    return cos_values_dict
-
-
-def get_recommended_movie_id(num_of_recommended_movies, cos_values_dict):
-    cos_value_sorted_tuple_list = sorted(cos_values_dict.items(), lambda x, y: cmp(x[1], y[1]), reverse=True)
-    recommended_cos_value = [cos_value_sorted_tuple_list[x] for x in range(0, num_of_recommended_movies)]
-    # print recommended_cos_value
-
-    recommended_movie_id_list = [recommended_cos_value[x][0] for x in range(0, len(recommended_cos_value))]
-    #print recommended_movie_id_list
-    return recommended_movie_id_list
-
-def recommend(user_preference_vector, dic_id_with_genre):
-    tfidf_vector = generate_tfidf_vector(user_preference_vector, dic_id_with_genre)
-    
-    print "tfidf_vector： ", tfidf_vector
-
-    cos_values_dict = get_cos_values_dict(dic_id_with_genre, tfidf_vector)
-
     # print len(cos_values_dict)
-
     return cos_values_dict
 
     # recommended_movie_id_list = get_recommended_movie_id(num_of_recommended_movies, cos_values_dict)
@@ -84,6 +98,16 @@ def recommend(user_preference_vector, dic_id_with_genre):
     # recommended_movie_id_list_file = open('recommended_movie_list.txt', 'w')
     # map(lambda x: recommended_movie_id_list_file.write(x+'\n'), recommended_movie_id_list)
 
+
+def recommend(user_liked_movie_ids):
+    # 为genre推荐的前期处理
+    movie_genre_vector_file = open(os.path.split(os.path.realpath(__file__))[0] + "/movie_genre_vector.json")
+    id_with_genre_dic = json.loads(movie_genre_vector_file.readline())
+    user_preference_vector = generate_user_genre_preference_vector(user_liked_movie_ids, id_with_genre_dic)
+
+    cos_values_dict = get_cos_values_dict(user_preference_vector, id_with_genre_dic)
+
+    return cos_values_dict
 
 #####################################################################################################
 

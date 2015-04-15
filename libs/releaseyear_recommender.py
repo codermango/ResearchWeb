@@ -98,5 +98,7 @@ def recommend(user_liked_movie_id_list):
     return cos_values_dict
 
 
+
+
 user_liked_movie_id_list = ["tt0348124","tt0401398","tt0486761","tt0181196","tt0389074","tt0279967","tt0969647","tt0097757","tt0103639"]
 recommend(user_liked_movie_id_list)
