@@ -19,12 +19,11 @@ def generate_yearvector(releaseyear):
     return result
 
 
-def get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyear_dict):
+def get_user_preference_vector(user_liked_movie_id_list, movieid_with_yearvector_dict):
     user_preference_vector = [0, 0, 0, 0]
     for movieid in user_liked_movie_id_list:
         try:
-            releaseyear = movieid_with_releaseyear_dict[movieid]
-            yearvector = generate_yearvector(releaseyear)
+            yearvector = movieid_with_yearvector_dict[movieid]
             user_preference_vector = [x + y for x, y in zip(user_preference_vector, yearvector)]
         except KeyError:
             continue
@@ -33,21 +32,24 @@ def get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyea
 
 
 
-def generate_tfidf_vector(user_preference_vector, movieid_with_yearvector_dict):
+def generate_tfidf_vector(user_liked_movie_id_list, movieid_with_yearvector_dict):
 
-    # 喜好列表中的时间段总数
-    sum_of_releaseduration_in_liked_list = sum(user_preference_vector)
-    print sum_of_releaseduration_in_liked_list, "===="
-    if sum_of_releaseduration_in_liked_list:
-        tf_vector = map(lambda x: x / sum_of_releaseduration_in_liked_list, user_preference_vector)
+    user_preference_vector = get_user_preference_vector(user_liked_movie_id_list, movieid_with_yearvector_dict)
+
+    
+    sum_of_user_liked_movies = len(user_liked_movie_id_list)
+    sum_of_all_movies = len(movieid_with_yearvector_dict)
+
+    if sum(user_preference_vector):
+        tf_vector = map(lambda x: x / sum_of_user_liked_movies, user_preference_vector)
         print "tf_vector:", tf_vector
 
-        sum_of_releaseduration_in_all_movies = len(movieid_with_yearvector_dict) #因为一个电影只有一个release year
         list_of_yearvector = movieid_with_yearvector_dict.values()
 
         sum_of_every_releaseduration = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_yearvector)
         print sum_of_every_releaseduration
-        idf_vector = map(lambda x: sum_of_releaseduration_in_all_movies / x, sum_of_every_releaseduration)
+
+        idf_vector = map(lambda x: sum_of_all_movies / x, sum_of_every_releaseduration)
         print "idf_vector:", idf_vector
 
         tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
@@ -89,9 +91,9 @@ def recommend(user_liked_movie_id_list):
 
     print movieid_with_yearvector_dict.items()[0]
 
-    user_preference_vector = get_user_preference_vector(user_liked_movie_id_list, movieid_with_releaseyear_dict)
+    
 
-    tfidf_vector = generate_tfidf_vector(user_preference_vector, movieid_with_yearvector_dict)
+    tfidf_vector = generate_tfidf_vector(user_liked_movie_id_list, movieid_with_yearvector_dict)
 
     cos_values_dict = get_cos_values_dict(movieid_with_yearvector_dict, tfidf_vector)
     

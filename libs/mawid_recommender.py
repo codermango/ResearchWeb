@@ -5,13 +5,6 @@ import math
 import os
 
 
-def get_sum_of_all_mawid_in_all_movies(dic_id_with_mawid):
-
-    mawid_list = dic_id_with_mawid.values()
-    result = sum(map(lambda x: len(x), mawid_list))
-    # print 'sum_of_all_mawid_in_all_movies:',result
-    return result
-
 
 def get_sum_of_every_mawid_dic(mawid_with_count_file):
     mawid_with_count_file = open(mawid_with_count_file)
@@ -69,7 +62,7 @@ def generate_sum_of_every_mawid_dic(dic_id_with_mawid):   # 太耗时！！！�
 
 
 
-def get_cos_sim(user_mawid_preference_dic, mawid_list, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic):
+def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_liked_movie_id_list, sum_of_every_mawid_dic):
 
     user_mawid_preference_dic_keys = user_mawid_preference_dic.keys()
     # 首先把两个列表的元素组合在一起
@@ -93,16 +86,18 @@ def get_cos_sim(user_mawid_preference_dic, mawid_list, sum_of_all_mawid_in_all_m
 
     # 然后算出tf-idf
     sum_of_user_liked_mawid = sum(user_mawid_preference_dic.values())
+    sum_of_user_liked_movies = len(user_liked_movie_id_list)
+    sum_of_all_movies = len(id_with_mawid_dict)
     # print sum_of_user_liked_mawid
     tf_dic = {}
     for k, v in user_mawid_preference_dic_tmp.items():
-        tf_dic[k] = v / sum_of_user_liked_mawid
+        tf_dic[k] = v / sum_of_user_liked_movies
 
     # print 'tf_idc:', tf_dic
 
     idf_dic = {}
     for i, j in user_mawid_preference_dic_tmp.items():
-        idf_dic[i] = sum_of_all_mawid_in_all_movies / sum_of_every_mawid_dic[i]
+        idf_dic[i] = sum_of_all_movies / sum_of_every_mawid_dic[i]
     # print 'idf_dic:', idf_dic
 
     tfidf_dic = {}
@@ -128,7 +123,7 @@ def get_cos_sim(user_mawid_preference_dic, mawid_list, sum_of_all_mawid_in_all_m
 
 
 
-def get_cos_sim_dict(user_mawid_preference_dic, dic_id_with_mawid, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic):
+def get_cos_sim_dict(user_mawid_preference_dic, dic_id_with_mawid, user_liked_movie_id_list,sum_of_every_mawid_dic):
     # print 'user_mawid_preference_dic:', user_mawid_preference_dic
     # print 'user_mawid_preference_dic values:', user_mawid_preference_dic.values()
     # print 'length of user_mawid_preference_dic:', len(user_mawid_preference_dic)
@@ -147,7 +142,7 @@ def get_cos_sim_dict(user_mawid_preference_dic, dic_id_with_mawid, sum_of_all_ma
         if not intersection_list:
             continue
 
-        cos_sim = get_cos_sim(user_mawid_preference_dic, mawid_list, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic)
+        cos_sim = get_cos_sim(user_mawid_preference_dic, dic_id_with_mawid, mawid_list, user_liked_movie_id_list, sum_of_every_mawid_dic)
 
         cos_sim_dic[k] = cos_sim
         #print cos_sim, intersection_list, 'dd'
@@ -168,13 +163,12 @@ def recommend(user_liked_movie_id_list):
     id_with_mawid_dic = json.loads(movie_id_with_mawid_file.readline())
     user_mawid_preference_dic = generate_user_mawid_preference_dic(user_liked_movie_id_list, id_with_mawid_dic)
 
-     # 此值在外部算好，避免进入循环增大计算量
-    sum_of_all_mawid_in_all_movies = get_sum_of_all_mawid_in_all_movies(id_with_mawid_dic)
+
     # generate_sum_of_every_mawid_dic(id_with_mawid_dic)  此操作很费时，提前算好存入文件mawid_with_count.json
     sum_of_every_mawid_dic = get_sum_of_every_mawid_dic(os.path.split(os.path.realpath(__file__))[0] + '/mawid_with_count.json')
 
 
-    cos_sim_dict = get_cos_sim_dict(user_mawid_preference_dic, id_with_mawid_dic, sum_of_all_mawid_in_all_movies, sum_of_every_mawid_dic)
+    cos_sim_dict = get_cos_sim_dict(user_mawid_preference_dic, id_with_mawid_dic, user_liked_movie_id_list, sum_of_every_mawid_dic)
 
     return cos_sim_dict
 ###################################################################################################

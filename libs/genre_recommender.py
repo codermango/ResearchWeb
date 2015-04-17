@@ -38,23 +38,26 @@ def get_sum_of_all_genre_in_all_movies(dic_id_with_genre):
 
 
 
-def generate_tfidf_vector(user_preference_vector, dic_id_with_genre):
+def generate_tfidf_vector(user_liked_movie_ids, dic_id_with_genre):
     list_of_all_movie_genre = dic_id_with_genre.values()
     sum_of_every_genre_vector = reduce(lambda x, y: [m + n for m, n in zip(x, y)], list_of_all_movie_genre)
     # print sum_of_every_genre_vector
 
-    sum_of_user_preference_vector = sum(user_preference_vector) # 也是sum_of_all_genre_in_liked_movies
+    sum_of_user_liked_movies = len(user_liked_movie_ids) 
+    sum_of_all_movies = len(dic_id_with_genre)
 
-    if sum_of_user_preference_vector:
-        tf_vector = map(lambda x: x / sum_of_user_preference_vector, user_preference_vector)
+    user_preference_vector = generate_user_genre_preference_vector(user_liked_movie_ids, dic_id_with_genre)
+
+    if sum(user_preference_vector):
+        tf_vector = map(lambda x: x / sum_of_user_liked_movies, user_preference_vector)
         # print 'tf_vector:', tf_vector
 
-        sum_of_all_genre_in_all_movies = get_sum_of_all_genre_in_all_movies(dic_id_with_genre)
-        idf_vector = map(lambda x: sum_of_all_genre_in_all_movies / x, sum_of_every_genre_vector)
+        idf_vector = map(lambda x: sum_of_all_movies / x, sum_of_every_genre_vector)
         # print 'idf_vector：', idf_vector
 
         tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
         # print 'tfidf_vector:', tfidf_vector
+
     else:
         tfidf_vector = user_preference_vector
 
@@ -71,8 +74,8 @@ def get_recommended_movie_id(num_of_recommended_movies, cos_values_dict):
     #print recommended_movie_id_list
     return recommended_movie_id_list
 
-def get_cos_values_dict(user_preference_vector, dic_id_with_genre):
-    tfidf_vector = generate_tfidf_vector(user_preference_vector, dic_id_with_genre)
+def get_cos_values_dict(user_liked_movie_ids, dic_id_with_genre):
+    tfidf_vector = generate_tfidf_vector(user_liked_movie_ids, dic_id_with_genre)
     
     print "tfidf_vector： ", tfidf_vector
 
@@ -103,9 +106,9 @@ def recommend(user_liked_movie_ids):
     # 为genre推荐的前期处理
     movie_genre_vector_file = open(os.path.split(os.path.realpath(__file__))[0] + "/movie_genre_vector.json")
     id_with_genre_dic = json.loads(movie_genre_vector_file.readline())
-    user_preference_vector = generate_user_genre_preference_vector(user_liked_movie_ids, id_with_genre_dic)
+    
 
-    cos_values_dict = get_cos_values_dict(user_preference_vector, id_with_genre_dic)
+    cos_values_dict = get_cos_values_dict(user_liked_movie_ids, id_with_genre_dic)
 
     return cos_values_dict
 
