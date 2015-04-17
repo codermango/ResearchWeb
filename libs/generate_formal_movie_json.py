@@ -24,8 +24,15 @@ movieid_with_mawid_dict = json.loads(movieid_with_mawid_file.readline())
 movieid_with_releaseyear_file = open("movieid_with_releaseyear.json")
 movieid_with_releaseyear_dict = json.loads(movieid_with_releaseyear_file.readline())
 
+imdbrating_file = open("../info/imdbrating.json")
+imdbrating_dict = json.loads(imdbrating_file.readline())
+
+
+
+
 all_movies_file = open("all_movies.dat", "w")
 
+count = 0
 for line in tagdb_after_neaten_genres_file:
     movie = json.loads(line)
     genres = movie["genres"]
@@ -38,12 +45,19 @@ for line in tagdb_after_neaten_genres_file:
     new_movie_format["mawid"] = movieid_with_mawid_dict[imdbid]
     new_movie_format["releaseYear"] = int(movieid_with_releaseyear_dict[imdbid])
     new_movie_format["directors"] = []
-    new_movie_format["imdbRating"] = 0
+    try:
+        new_movie_format["imdbRating"] = imdbrating_dict[imdbid]
+    except KeyError:
+        print imdbid
+        continue
 
     new_movie_format_json = json.dumps(new_movie_format)
     all_movies_file.write(new_movie_format_json + "\n")
 
+print count
+
 all_movies_file.close()
 tagdb_after_neaten_genres_file.close()
-
-
+movieid_with_mawid_file.close()
+movieid_with_releaseyear_file.close()
+imdbrating_file.close()
