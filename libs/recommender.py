@@ -11,29 +11,30 @@ import os
 def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, releaseyear_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list):
     final_cos_sim_dic = {}
 
-    if not genre_cos_sim_dic.values()[0]:
-        genre_cos_sim_dic = {}
-
-
     genre_cos_sim_counter = Counter(genre_cos_sim_dic)
     mawid_cos_sim_counter = Counter(mawid_cos_sim_dic)
     releaseyear_cos_sim_counter = Counter(releaseyear_cos_sim_dic)
 
-    combined_cos_sim_counter = genre_cos_sim_counter + mawid_cos_sim_counter + releaseyear_cos_sim_counter
-    print "///////////////////", genre_cos_sim_counter.most_common(10)
+    combined_cos_sim_counter = genre_cos_sim_counter + mawid_cos_sim_counter
 
-    print genre_cos_sim_counter["tt0114369"], genre_cos_sim_counter["tt0111893"], genre_cos_sim_counter["tt0105695"], genre_cos_sim_counter["tt0100813"], genre_cos_sim_counter["tt0120584"]
-    print mawid_cos_sim_counter["tt0114369"], mawid_cos_sim_counter["tt0111893"], mawid_cos_sim_counter["tt0105695"], mawid_cos_sim_counter["tt0100813"], mawid_cos_sim_counter["tt0120584"]
-    print releaseyear_cos_sim_counter["tt0114369"], releaseyear_cos_sim_counter["tt0111893"], releaseyear_cos_sim_counter["tt0105695"], releaseyear_cos_sim_counter["tt0100813"], releaseyear_cos_sim_counter["tt0120584"]
-
-
-
+    # 乘上rating和releaseYear产生的系数
     imdbrating_file = open(os.path.split(os.path.realpath(__file__))[0] + "/imdbrating.json")
     imdbrating_dict = json.loads(imdbrating_file.readline())
-    for k, v in imdbrating_dict.items():
-        combined_cos_sim_counter[k] *= imdbrating_dict[k]
+    for item in combined_cos_sim_counter:
+        try:
+            combined_cos_sim_counter[item] *= imdbrating_dict[item]
+            if releaseyear_cos_sim_dic[item] < 1990:
+                combined_cos_sim_counter[item] *= 0.6
+            elif releaseyear_cos_sim_dic[item] >= 1990 and releaseyear_cos_sim_dic[item] < 2000:
+                combined_cos_sim_counter[item] *= 0.7
+            elif releaseyear_cos_sim_dic[item] >= 2000 and releaseyear_cos_sim_dic[item] < 2010:
+                combined_cos_sim_counter[item] *= 0.8
+            elif releaseyear_cos_sim_dic[item] >= 2010 and releaseyear_cos_sim_dic[item] < 2020:
+                combined_cos_sim_counter[item] *= 0.9
+        except KeyError:
+            continue
 
-
+    print "///////", genre_cos_sim_counter["tt1905041"], mawid_cos_sim_counter["tt1905041"], combined_cos_sim_counter["tt1905041"]
 
     # for key in user_liked_movie_id_list:    
     #     del combined_cos_sim_counter[key]
@@ -44,6 +45,12 @@ def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, releaseyear_cos_sim_di
     final_genre_recommended_movies = genre_cos_sim_counter.most_common(num_of_recommended_movies)
     final_mawid_recommended_movies = mawid_cos_sim_counter.most_common(num_of_recommended_movies)
     final_releaseyear_recommended_movies = releaseyear_cos_sim_counter.most_common(num_of_recommended_movies)
+
+    # 分数分析
+    for item in final_co_recommended_movies:
+        print item, ":", genre_cos_sim_counter[item[0]], mawid_cos_sim_counter[item[0]], releaseyear_cos_sim_counter[item[0]]
+
+
 
     print 'final_co_recommended_movies:', final_co_recommended_movies
     # print final_genre_recommended_movies
@@ -67,7 +74,7 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
     mawid_cos_sim_dic = mawid_recommender.recommend(user_liked_movie_id_list)
     releaseyear_cos_sim_dic = releaseyear_recommender.recommend(user_liked_movie_id_list)
 
-    num_of_recommended_movies = 30
+    num_of_recommended_movies = 20
     result = generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, releaseyear_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list)
     print result
     return dict(result[recommend_method]).keys()
