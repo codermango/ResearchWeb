@@ -6,15 +6,15 @@ import os
 
 
 
-def get_sum_of_every_mawid_dic(mawid_with_count_file):
-    mawid_with_count_file = open(mawid_with_count_file)
-    content = json.loads(mawid_with_count_file.readline())
+def get_sum_of_every_actorid_dic(actorid_with_imdbid_file):
+    actorid_with_imdbid_f = open(actorid_with_imdbid_file)
+    actorid_imdbid_dict = json.loads(actorid_with_imdbid_f.readline())
 
-    return content
+    return actorid_imdbid_dict
 
 
 
-def generate_user_mawid_preference_dic(user_liked_movie_id_list, dic_id_with_mawid):
+def generate_user_actorid_preference_dic(user_liked_movie_id_list, dic_id_with_mawid):
     user_mawid_preference_dic = {}
 
     user_mawid_list = []
@@ -36,33 +36,34 @@ def generate_user_mawid_preference_dic(user_liked_movie_id_list, dic_id_with_maw
     return user_mawid_preference_dic
 
 
-def generate_sum_of_every_mawid_dic(dic_id_with_mawid):   # 太耗时！！！！！！！！！！
-    mawid_list = []
-    dic_id_with_mawid_values = dic_id_with_mawid.values()
-    mawid_list = reduce(lambda x, y: x + y, dic_id_with_mawid_values)
-    mawid_list = list(set(mawid_list))
+def generate_mainactor_imdbid_file(id_with_actorid_dict):   # 太耗时！！！！！！！！！！
+    actorid_list = []
+    id_with_actorid_dict_value = id_with_actorid_dict.values()
+    actorid_list = reduce(lambda x, y: x + y, id_with_actorid_dict_value)
+    actorid_list = list(set(actorid_list))
 
-    # print len(mawid_list)
-    # print len(dic_id_with_mawid), 'aaa'
-
-    mawid_with_count_dic = {}
-    for mawid in mawid_list:
-        num = 0
-        for k, v in dic_id_with_mawid.items():
-            num += v.count(mawid)
-        mawid_with_count_dic[mawid] = num
-        print 0
-
-    mawid_with_count_file = open('mawid_with_count.json', 'w')
-    mawid_with_count_json = json.dumps(mawid_with_count_dic)
-    mawid_with_count_file.write(mawid_with_count_json + "\n")
-
-    mawid_with_count_file.close()
+    print len(actorid_list)
+    
+    actorid_imdbid_dict = {}
+    for actorid in actorid_list:
+        imdbid_list = []
+        for k, v in id_with_actorid_dict.items():
+            if actorid in v:
+                print actorid
+                imdbid_list.append(k)
+        actorid_imdbid_dict[actorid] = imdbid_list
 
 
+    actorid_with_imdbid_file = open('actorid_with_imdbid.json', 'w')
+    actorid_with_imdbid_json = json.dumps(actorid_imdbid_dict)
+    actorid_with_imdbid_file.write(actorid_with_imdbid_json + "\n")
+
+    actorid_with_imdbid_file.close()
 
 
-def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_liked_movie_id_list, sum_of_every_mawid_dic):
+
+
+def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_liked_movie_id_list, sum_of_every_actorid_dic):
 
     user_mawid_preference_dic_keys = user_mawid_preference_dic.keys()
     # 首先把两个列表的元素组合在一起
@@ -97,7 +98,7 @@ def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_
 
     idf_dic = {}
     for i, j in user_mawid_preference_dic_tmp.items():
-        idf_dic[i] = sum_of_all_movies / sum_of_every_mawid_dic[i]
+        idf_dic[i] = sum_of_all_movies / len(sum_of_every_actorid_dic[i])
     # print 'idf_dic:', idf_dic
 
     tfidf_dic = {}
@@ -123,26 +124,26 @@ def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_
 
 
 
-def get_cos_sim_dict(user_mawid_preference_dic, dic_id_with_mawid, user_liked_movie_id_list,sum_of_every_mawid_dic):
-    # print 'user_mawid_preference_dic:', user_mawid_preference_dic
-    # print 'user_mawid_preference_dic values:', user_mawid_preference_dic.values()
-    # print 'length of user_mawid_preference_dic:', len(user_mawid_preference_dic)
+def get_cos_sim_dict(user_actorid_preference_dic, id_with_actorid_dict, user_liked_movie_id_list, sum_of_every_actorid_dic):
+    # print 'user_actorid_preference_dic:', user_actorid_preference_dic
+    # print 'user_actorid_preference_dic values:', user_actorid_preference_dic.values()
+    # print 'length of user_actorid_preference_dic:', len(user_actorid_preference_dic)
 
     count = 0
-    user_mawid_preference_dic_keys = user_mawid_preference_dic.keys()
+    user_actorid_preference_dic_keys = user_actorid_preference_dic.keys()
 
     
     cos_sim_dic = {}
-    for k, v in dic_id_with_mawid.items():
+    for k, v in id_with_actorid_dict.items():
 
         count += 1
         mawid_list = v
-        intersection_list = list(set(mawid_list).intersection(set(user_mawid_preference_dic_keys)))
+        intersection_list = list(set(mawid_list).intersection(set(user_actorid_preference_dic_keys)))
 
         if not intersection_list:
             continue
 
-        cos_sim = get_cos_sim(user_mawid_preference_dic, dic_id_with_mawid, mawid_list, user_liked_movie_id_list, sum_of_every_mawid_dic)
+        cos_sim = get_cos_sim(user_actorid_preference_dic, id_with_actorid_dict, mawid_list, user_liked_movie_id_list, sum_of_every_actorid_dic)
 
         cos_sim_dic[k] = cos_sim
         #print cos_sim, intersection_list, 'dd'
@@ -159,16 +160,16 @@ def get_cos_sim_dict(user_mawid_preference_dic, dic_id_with_mawid, user_liked_mo
 
 def recommend(user_liked_movie_id_list):
     # 为mawid推荐的前期处理
-    movie_id_with_mawid_file = open(os.path.split(os.path.realpath(__file__))[0] + '/movie_id_with_mawid.json')
-    id_with_mawid_dic = json.loads(movie_id_with_mawid_file.readline())
-    user_mawid_preference_dic = generate_user_mawid_preference_dic(user_liked_movie_id_list, id_with_mawid_dic)
+    movie_id_with_actorid_file = open(os.path.split(os.path.realpath(__file__))[0] + '/imdbmainactors.json')
+    id_with_actorid_dic = json.loads(movie_id_with_actorid_file.readline())
+    user_actorid_preference_dic = generate_user_actorid_preference_dic(user_liked_movie_id_list, id_with_actorid_dic)
 
 
-    # generate_sum_of_every_mawid_dic(id_with_mawid_dic)  此操作很费时，提前算好存入文件mawid_with_count.json
-    sum_of_every_mawid_dic = get_sum_of_every_mawid_dic(os.path.split(os.path.realpath(__file__))[0] + '/mawid_with_count.json')
+    #generate_mainactor_imdbid_file(id_with_actorid_dic)  #此操作很费时，提前算好存入文件mawid_with_count.json
+    sum_of_every_actorid_dic = get_sum_of_every_actorid_dic(os.path.split(os.path.realpath(__file__))[0] + '/actorid_with_imdbid.json')
 
 
-    cos_sim_dict = get_cos_sim_dict(user_mawid_preference_dic, id_with_mawid_dic, user_liked_movie_id_list, sum_of_every_mawid_dic)
+    cos_sim_dict = get_cos_sim_dict(user_actorid_preference_dic, id_with_actorid_dic, user_liked_movie_id_list, sum_of_every_actorid_dic)
 
     return cos_sim_dict
 ###################################################################################################
@@ -176,7 +177,11 @@ def recommend(user_liked_movie_id_list):
 
 
 
+user_liked_movie_id_list = ["tt0133093","tt0137523","tt0468569","tt0172495","tt0114369","tt1375666","tt0361862","tt0482571","tt0268978","tt0110322"]
 
+id_list = recommend(user_liked_movie_id_list)
+
+print "final recommend:", id_list
 
 
 
