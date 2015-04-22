@@ -50,13 +50,13 @@ def generate_tfidf_vector(user_liked_movie_ids, dic_id_with_genre):
 
     if sum(user_preference_vector):
         tf_vector = map(lambda x: x / sum_of_user_liked_movies, user_preference_vector)
-        # print 'tf_vector:', tf_vector
+        print 'tf_vector:', tf_vector
 
         idf_vector = map(lambda x: sum_of_all_movies / x, sum_of_every_genre_vector)
-        # print 'idf_vector：', idf_vector
+        print 'idf_vector：', idf_vector
 
-        tfidf_vector = [x * y for x, y in zip(tf_vector, idf_vector)]
-        # print 'tfidf_vector:', tfidf_vector
+        tfidf_vector = [(x * y) ** 2 for x, y in zip(tf_vector, idf_vector)]
+        print 'tfidf_vector:', tfidf_vector
 
     else:
         tfidf_vector = user_preference_vector

@@ -86,10 +86,9 @@ def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_
 
 
     # 然后算出tf-idf
-    sum_of_user_liked_mawid = sum(user_mawid_preference_dic.values())
     sum_of_user_liked_movies = len(user_liked_movie_id_list)
     sum_of_all_movies = len(id_with_mawid_dict)
-    # print sum_of_user_liked_mawid
+    
     tf_dic = {}
     for k, v in user_mawid_preference_dic_tmp.items():
         tf_dic[k] = v / sum_of_user_liked_movies
@@ -103,7 +102,7 @@ def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_
 
     tfidf_dic = {}
     for key in tf_dic.keys():
-        tfidf_dic[key] = tf_dic[key] * idf_dic[key]
+        tfidf_dic[key] = (tf_dic[key] * idf_dic[key]) ** 2
     # print 'tfidf_dic:', tfidf_dic
     # print 'mawid_list_dic:', mawid_list_dic
     #最后算出cos相似度
