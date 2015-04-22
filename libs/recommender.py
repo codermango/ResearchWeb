@@ -1,9 +1,9 @@
 #!coding=utf-8
 import json
 import math
-import genre_recommender
-import mawid_recommender
-import releaseyear_recommender
+import recommender_genres
+import recommender_actors
+import recommender_releaseyear
 from collections import Counter
 import os
 
@@ -69,10 +69,10 @@ def generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, releaseyear_cos_sim_di
 def recommend(user_liked_movie_id_list, recommend_method="all"):
 
     # 以下可分别得到根据genre和mawid推荐出的结果，均为（movied_id: cos_sim_value）这种的字典
-    genre_cos_sim_dic = genre_recommender.recommend(user_liked_movie_id_list)
+    genre_cos_sim_dic = recommender_genres.recommend(user_liked_movie_id_list)
     print "+++++++", sum(genre_cos_sim_dic.values())
-    mawid_cos_sim_dic = mawid_recommender.recommend(user_liked_movie_id_list)
-    releaseyear_cos_sim_dic = releaseyear_recommender.recommend(user_liked_movie_id_list)
+    mawid_cos_sim_dic = recommender_actors.recommend(user_liked_movie_id_list)
+    releaseyear_cos_sim_dic = recommender_releaseyear.recommend(user_liked_movie_id_list)
 
     num_of_recommended_movies = 20
     result = generate_result(genre_cos_sim_dic, mawid_cos_sim_dic, releaseyear_cos_sim_dic, num_of_recommended_movies, user_liked_movie_id_list)
