@@ -104,7 +104,7 @@ def get_cos_values_dict(user_liked_movie_ids, dic_id_with_genre):
 
 def recommend(user_liked_movie_ids):
     # 为genre推荐的前期处理
-    movie_genre_vector_file = open(os.path.split(os.path.realpath(__file__))[0] + "/movie_genre_vector.json")
+    movie_genre_vector_file = open(os.path.split(os.path.realpath(__file__))[0] + "/imdbid_genrevector.json")
     id_with_genre_dic = json.loads(movie_genre_vector_file.readline())
     
 
