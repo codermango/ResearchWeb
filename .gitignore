@@ -1,2 +1,2 @@
 *.pyc
-recommender_libs/*.json
+*.json
