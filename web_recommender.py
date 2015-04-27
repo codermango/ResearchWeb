@@ -25,18 +25,18 @@ def web_recommender_result():
         director_recommended_ids = recommender_libs.recommender.recommend(trimed_ids_list, "director")
         all_recommended_ids = recommender_libs.recommender.recommend(trimed_ids_list, "all")
 
-        
-
-        #return Response(stream_template("web_recommender.html", liked_ids=trimed_ids_list, genre_recommended_ids=genre_recommended_ids, mawid_recommended_ids=mawid_recommended_ids, all_recommended_ids=all_recommended_ids))
         return render_template("web_recommender.html", liked_ids=trimed_ids_list, genre_recommended_ids=genre_recommended_ids, actor_recommended_ids=actor_recommended_ids, director_recommended_ids=director_recommended_ids, all_recommended_ids=all_recommended_ids)
 
+        # return Response(render_template("web_recommender.html"),generate_recommend_movies(trimed_ids_list))
 
-def stream_template(template_name, **context):
-    app.update_template_context(context)
-    t = app.jinja_env.get_template(template_name)
-    rv = t.stream(context)
-    rv.enable_buffering(5)
-    return rv
+
+
+def generate_recommend_movies(trimed_ids_list):
+    all_recommended_ids = recommender_libs.recommender.recommend(trimed_ids_list, "all")
+    yield "all_recommended_ids"
+    #yield render_template("web_recommender.html")
+    
+
 
 
 
@@ -47,4 +47,4 @@ def get_file_count(dir):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
