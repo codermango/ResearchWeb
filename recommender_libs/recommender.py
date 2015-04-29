@@ -8,16 +8,10 @@ from collections import Counter
 import os
 
 
-def generate_result(genre_movieid_sim_dict, actor_movieid_sim_dict, director_movieid_sim_dict, num_of_recommended_movies, user_liked_movie_id_list):
-    # final_cos_sim_dic = {}
 
-    genre_movieid_sim_counter = Counter(genre_movieid_sim_dict)
-    actor_movieid_sim_counter = Counter(actor_movieid_sim_dict)
-    director_movieid_sim_counter = Counter(director_movieid_sim_dict)
 
-    combined_movieid_sim_counter = genre_movieid_sim_counter + actor_movieid_sim_counter + director_movieid_sim_counter
 
-    # 乘上rating和releaseYear产生的系数
+def filter_by_rating_and_releaseyear(combined_movieid_sim_counter):
     imdbrating_file = open(os.path.split(os.path.realpath(__file__))[0] + "/imdbid_ratings.json")
     imdbrating_dict = json.loads(imdbrating_file.readline())
     movieid_releaseyear_file = open(os.path.split(os.path.realpath(__file__))[0] + "/imdbid_releaseyear.json")
@@ -35,26 +29,64 @@ def generate_result(genre_movieid_sim_dict, actor_movieid_sim_dict, director_mov
                 combined_movieid_sim_counter[item] *= 0.9
         except KeyError:
             continue
+    return combined_movieid_sim_counter
 
-    print "///////", genre_movieid_sim_counter["tt1905041"], actor_movieid_sim_counter["tt1905041"], combined_movieid_sim_counter["tt1905041"]
 
-    for key in user_liked_movie_id_list:    
+def filter_by_language(user_liked_movie_id_list, combined_movieid_sim_counter):
+    with open(os.path.split(os.path.realpath(__file__))[0] + "/imdbid_language.json") as imdbid_language_file:
+        imdbid_language_dict = json.loads(imdbid_language_file.readline())
+
+    languages_in_liked_list = []
+    for item in user_liked_movie_id_list:
+        try:
+            languages_in_liked_list += imdbid_language_dict[item]
+        except KeyError:
+            continue
+
+    languages_in_liked_list = list(set(languages_in_liked_list))
+    print languages_in_liked_list, "77777777777777777"
+
+    delete_list = []
+    for imdbid in combined_movieid_sim_counter:
+        language_list = imdbid_language_dict[imdbid]
+        intersection_list = list(set(languages_in_liked_list).intersection(set(language_list)))
+        if not intersection_list: # 如果为空,则排除此电影
+            delete_list.append(imdbid)
+
+    for x in delete_list:
+        del combined_movieid_sim_counter[x]
+
+    return combined_movieid_sim_counter
+
+
+
+def generate_result(genre_movieid_sim_dict, actor_movieid_sim_dict, director_movieid_sim_dict, num_of_recommended_movies, user_liked_movie_id_list):
+    # final_cos_sim_dic = {}
+
+    genre_movieid_sim_counter = Counter(genre_movieid_sim_dict)
+    actor_movieid_sim_counter = Counter(actor_movieid_sim_dict)
+    director_movieid_sim_counter = Counter(director_movieid_sim_dict)
+
+    combined_movieid_sim_counter = genre_movieid_sim_counter + actor_movieid_sim_counter + director_movieid_sim_counter
+
+    # filter
+    # 乘上rating和releaseYear产生的系数
+    combined_movieid_sim_counter = filter_by_rating_and_releaseyear(combined_movieid_sim_counter)
+    combined_movieid_sim_counter = filter_by_language(user_liked_movie_id_list, combined_movieid_sim_counter)
+
+
+
+    for key in user_liked_movie_id_list:
         del combined_movieid_sim_counter[key]
         del genre_movieid_sim_counter[key]
         del actor_movieid_sim_counter[key]
         del director_movieid_sim_counter[key]
 
+
     final_co_recommended_movies = combined_movieid_sim_counter.most_common(num_of_recommended_movies)
     final_genre_recommended_movies = genre_movieid_sim_counter.most_common(num_of_recommended_movies)
     final_actor_recommended_movies = actor_movieid_sim_counter.most_common(num_of_recommended_movies)
     final_director_recommended_movies = director_movieid_sim_counter.most_common(num_of_recommended_movies)
-
-    # 分数分析
-    for item in final_co_recommended_movies:
-        print item, ":", genre_movieid_sim_counter[item[0]], actor_movieid_sim_counter[item[0]]
-
-
-    
 
     dic_result = dict()
     dic_result["all"] = final_co_recommended_movies

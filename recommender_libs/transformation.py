@@ -99,6 +99,11 @@ def generate_imdbid_genrevector(imdbid_genres_dict):
         imdbid_genrevector_file.write(imdbid_genrevector_json + "\n")
 
 
+def generate_imdbid_language(imdbid_language_dict):
+    imdbid_language_json = json.dumps(imdbid_language_dict)
+    with open("imdbid_language.json", "w") as imdbid_language_file:
+        imdbid_language_file.write(imdbid_language_json)
+
 
 def transform(all_movies_file_path):
 
@@ -107,6 +112,7 @@ def transform(all_movies_file_path):
     imdbid_ratings_dict = {}
     imdbid_releaseyear_dict = {}
     imdbid_genres_dict = {}
+    imdbid_language_dict = {}
 
     with open(all_movies_file_path) as all_movies_file:
         for line in all_movies_file:
@@ -117,13 +123,14 @@ def transform(all_movies_file_path):
             directors = movie["imdbDirectors"]
             releaseyear = movie["releaseYear"]
             genres = movie["genres"]
+            language = movie["language"]
 
             imdbid_directors_dict[imdbid] = directors
             imdbid_mainactors_dict[imdbid] = mainactors
             imdbid_ratings_dict[imdbid] = ratings
             imdbid_releaseyear_dict[imdbid] = releaseyear
             imdbid_genres_dict[imdbid] = genres
-
+            imdbid_language_dict[imdbid] = language
 
     # generate_imdbid_directors(imdbid_directors_dict)
     # generate_imdbid_mainactors(imdbid_mainactors_dict)
@@ -134,10 +141,11 @@ def transform(all_movies_file_path):
     # generate_director_imdbids(imdbid_directors_dict)
     # generate_mainactor_imdbids(imdbid_mainactors_dict)
 
-    # 生成imdbid_genrevector
-    generate_imdbid_genrevector(imdbid_genres_dict)
+    # # 生成imdbid_genrevector
+    # generate_imdbid_genrevector(imdbid_genres_dict)
 
-
+    # 生成imdbid_language
+    generate_imdbid_language(imdbid_language_dict)
 
 
 ###############################################################################################
