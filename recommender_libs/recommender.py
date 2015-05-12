@@ -83,19 +83,19 @@ def generate_result(genre_movieid_sim_dict, actor_movieid_sim_dict, director_mov
         del director_movieid_sim_counter[key]
 
 
-    final_co_recommended_movies = combined_movieid_sim_counter.most_common(num_of_recommended_movies)
-    final_genre_recommended_movies = genre_movieid_sim_counter.most_common(num_of_recommended_movies)
-    final_actor_recommended_movies = actor_movieid_sim_counter.most_common(num_of_recommended_movies)
-    final_director_recommended_movies = director_movieid_sim_counter.most_common(num_of_recommended_movies)
+    # final_co_recommended_movies = combined_movieid_sim_counter.most_common(num_of_recommended_movies)
+    # final_genre_recommended_movies = genre_movieid_sim_counter.most_common(num_of_recommended_movies)
+    # final_actor_recommended_movies = actor_movieid_sim_counter.most_common(num_of_recommended_movies)
+    # final_director_recommended_movies = director_movieid_sim_counter.most_common(num_of_recommended_movies)
 
-    dic_result = dict()
-    dic_result["all"] = final_co_recommended_movies
-    dic_result["genre"] = final_genre_recommended_movies
-    dic_result["actor"] = final_actor_recommended_movies
-    dic_result["director"] = final_director_recommended_movies
+    # dic_result = dict()
+    # dic_result["all"] = final_co_recommended_movies
+    # dic_result["genre"] = final_genre_recommended_movies
+    # dic_result["actor"] = final_actor_recommended_movies
+    # dic_result["director"] = final_director_recommended_movies
 
-    return dic_result
-
+    # return dic_result
+    return combined_movieid_sim_counter
 
 
 def recommend(user_liked_movie_id_list, recommend_method="all"):
@@ -108,9 +108,15 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
     num_of_recommended_movies = 10
     result = generate_result(genre_movieid_sim_dict, actor_movieid_sim_dict, director_movieid_sim_dict, num_of_recommended_movies, user_liked_movie_id_list)
 
-    return dict(result[recommend_method]).keys()
+    return result
 
 
+
+
+def combine_like_dislike(recommend_like_counter, recommend_dislike_counter):
+    tmp_counter = recommend_like_counter - recommend_dislike_counter
+    final_counter = tmp_counter.most_common(20)
+    return final_counter
 
 ###########################################################################
 ###########################################################################
@@ -122,12 +128,18 @@ def recommend(user_liked_movie_id_list, recommend_method="all"):
 
 
 # user_liked_movie_id_list = ["tt0133093","tt0137523","tt0468569","tt0172495","tt0114369","tt1375666","tt0361862","tt0482571","tt0268978","tt0110322"]
-user_liked_movie_id_list = ["tt0468569","tt0137523","tt0114369","tt0110322","tt0172495","tt0133093","tt1375666","tt1345836","tt0109830","tt0814314"]
+user_like_movie_id_list = ["tt0468569","tt0137523","tt0114369","tt0110322","tt0172495","tt0133093","tt1375666","tt1345836","tt0109830","tt0814314"]
+user_dislike_movie_id_list = []
 
 
-id_list = recommend(user_liked_movie_id_list)
+recommend_like_counter = recommend(user_like_movie_id_list)
+recommend_dislike_counter = recommend(user_dislike_movie_id_list)
 
-print "final recommend:", id_list
+
+final_result = combine_like_dislike(recommend_like_counter, recommend_dislike_counter)
+print final_result
+
+
 
 
 
