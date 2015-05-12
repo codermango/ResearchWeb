@@ -98,22 +98,17 @@ def get_cos_sim(user_mawid_preference_dic, id_with_mawid_dict, mawid_list, user_
 
 
 def get_cos_sim_dict(user_actorid_preference_dic, id_with_actorid_dict, user_liked_movie_id_list, sum_of_every_actorid_dic):
-    # print 'user_actorid_preference_dic:', user_actorid_preference_dic
-    # print 'user_actorid_preference_dic values:', user_actorid_preference_dic.values()
-    # print 'length of user_actorid_preference_dic:', len(user_actorid_preference_dic)
 
-    count = 0
     user_actorid_preference_dic_keys = user_actorid_preference_dic.keys()
 
-    
     cos_sim_dic = {}
     for k, v in id_with_actorid_dict.items():
 
-        count += 1
         mawid_list = v
         intersection_list = list(set(mawid_list).intersection(set(user_actorid_preference_dic_keys)))
 
         if not intersection_list:
+            cos_sim_dic[k] = 0
             continue
 
         cos_sim = get_cos_sim(user_actorid_preference_dic, id_with_actorid_dict, mawid_list, user_liked_movie_id_list, sum_of_every_actorid_dic)
@@ -150,9 +145,9 @@ def recommend(user_liked_movie_id_list):
 
 user_liked_movie_id_list = ["tt0133093","tt0137523","tt0468569","tt0172495","tt0114369","tt1375666","tt0361862","tt0482571","tt0268978","tt0110322"]
 
-id_list = recommend(user_liked_movie_id_list)
+# id_list = recommend(user_liked_movie_id_list)
 
-print "final recommend:", id_list
+# print "final recommend:", id_list
 
 
 
