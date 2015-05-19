@@ -1,0 +1,190 @@
+body {
+    text-align: center;
+    margin: 0px;
+    background-color: #000000;
+}
+
+#header {
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    top: 0;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-color: #032339;
+    z-index: 1000;
+    background-color: #032339;
+}
+
+#nav {
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+}
+
+#nav a {
+    float: left;
+    width: 20px;
+    font-size: 20px;
+    color: white;
+    padding: 20px 26px 20px 26px;
+    text-decoration: none;
+    -webkit-transition: background-color 1s;
+}
+
+#nav a:hover {
+    background-color: #123E5C;
+}
+
+
+#logo {
+    top: 50%;
+    margin-top: 12px;
+    background-color: #123E5C;
+    border-radius: 15px;
+    float: right;
+    margin-right: 10px;
+    height: 37px;
+    width: 180px;
+    padding-top: 5px;
+}
+
+
+
+#main {
+    /*position: relative;*/
+    border: 1px solid;
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+    min-height: 1200px;
+    padding: 0px;
+    margin-top: 70px;
+    background-color: #032339;
+}
+
+
+#submit-area {
+    margin: 20px 0px 20px 0px;
+    width: 1130px;
+    min-height: 40px;
+    background-color: white;
+    border-radius: 10px;
+
+}
+
+#submit-input {
+    float: left;
+    width: 1000px;
+    vertical-align: middle;
+    height: 30px;
+    border-style: none;
+    margin-left: 5px;
+    margin-top: 3px;
+    font-size: 20px;
+}
+
+#submit-input:focus {
+    outline: none;
+}
+
+#submit-button {
+    outline: none;
+    float: left;
+    height: 40px;
+    width: 120px;
+    margin-left: 5px;
+    border-style: none; 
+    border-top-right-radius: 9px;
+    border-bottom-right-radius: 9px;
+    font-family: Impact, Charcoal, sans-serif;
+    font-size: 25px;
+    color: white;
+    background-color: #123E5C;
+}
+
+#submit-button:hover {
+    cursor: pointer;
+    background-color: #03304E;
+}
+
+#liked-movie {
+    margin: 20px 20px 20px 5px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid;
+    width: 1130px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+#liked-movie-list {
+    overflow: hidden;
+}
+
+
+#liked-movie-list div {
+
+    /*position: relative;*/
+    float: left;
+    width: 120px;
+    height: 210px;
+    /*background-color: grey;*/
+    margin-left: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    color: white;
+}
+
+.img-block {
+     width: 120px;
+     height: 180px;
+     border-radius: 5px;
+}
+
+
+#recommended-movie {
+    margin: 20px 20px 20px 5px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid;
+    width: 1130px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+
+.category-title {
+    height: 30px;
+    margin: 10px 5px 10px 5px;
+    color: white;
+}
+
+.recommended-category {
+    /*background-color: red;*/
+
+    width: 1130px;
+    margin: 10px auto 10px auto;
+    overflow: hidden;
+}
+
+
+.recommended-movie-list {
+    overflow: hidden;
+}
+
+
+.recommended-movie-list div {
+
+    float: left;
+    width: 120px;
+    height: 210px;
+    /*background-color: grey;*/
+    margin-left: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    color: white;
+}
+
